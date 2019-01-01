@@ -1,26 +1,30 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route } from 'react-router-dom'
+
+import { Container } from 'semantic-ui-react'
+
+import LoginPage from './pages/login.page'
+import ChatPage from './pages/chat.page'
+
+import FeathersIO from './services/socketio.service'
+
+import { getMessages, getUsers } from './actions/chat.actions'
+
 
 class App extends Component {
+
+  constructor(props) {
+    super(props)
+    FeathersIO.service('messages').on('created', getMessages)
+    FeathersIO.service('users').on('created', getUsers)
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Container>
+        <Route exact path="/" component={ LoginPage } />
+        <Route exact path="/chat" component={ ChatPage } />
+      </Container>
     );
   }
 }
