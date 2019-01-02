@@ -1,13 +1,22 @@
 import FeathersIO from '../services/socketio.service'
 
+/**
+ * Get users list
+ * @returns { async dispatch }
+ */
 export const getUsers = () => {
 
   return async dispatch => {
+
     let users, error
     try {
+
       users = await FeathersIO.service('users').find()
       console.log('users fetched')
+
     } catch(err) {
+
+      console.log('error fetching users: ', err.message)
       error = err.message
     }
 
@@ -20,14 +29,23 @@ export const getUsers = () => {
 
 }
 
+/**
+ * Get messages list
+ * @returns { async dispatch }
+ */
 export const getMessages = () => {
 
   return async dispatch => {
+
     let messages, error
     try {
+
       messages = await FeathersIO.service('messages').find()
       console.log('messages fetched')
+
     } catch(err) {
+
+      console.log('error fetching messages: ', err.message)
       error = err.message
     }
 
@@ -40,13 +58,16 @@ export const getMessages = () => {
 
 }
 
+/**
+ * Post a new message
+ * @param { String } message
+ * @returns { async dispatch } 
+ */
 export const postMessage = message => {
-  console.log('action postMessage')
- 
+
   return async dispatch => {
 
     let error
-
     try {
 
       // Create a new message
@@ -54,8 +75,10 @@ export const postMessage = message => {
         text: message
       })
       console.log('Message created')
+
     } catch(err) {
-      console.log('error: ', err.message)
+
+      console.log('error creating message: ', err.message)
       error = err.message
     }
 
@@ -65,4 +88,34 @@ export const postMessage = message => {
     })
   }
 
+}
+
+/**
+ * On new messages are created
+ * @param { Object } message
+ * @returns { dispatch }
+ */
+export const newMessage = message => {
+  console.log('new message arrived')
+  return dispatch => {
+    return dispatch({
+      type: 'NEW_MESSAGE',
+      message: message
+    })
+  }
+}
+
+/**
+ * On new users are created
+ * @param { Object } user
+ * @returns { dispatch }
+ */
+export const newUser = user => {
+  console.log('new user created')
+  return dispatch => {
+    return dispatch({
+      type: 'NEW_USER',
+      user: user
+    })
+  }
 }

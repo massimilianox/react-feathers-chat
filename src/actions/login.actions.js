@@ -4,31 +4,41 @@ import FeathersIO from '../services/socketio.service'
 /**
  * For signup, create a new user and then log them in
  * @param {object?} credential
- * @returns {async dispatch} SINGUP
+ * @returns {async dispatch} SIGNUP
  */
-export const singup = credential => {
-
-  let message
+export const signup = credential => {
 
   return async dispatch => {
+    
+    let message, authenticated
+
     try {
 
-      // first create the user if it does not exist
+      // create the user if it does not exist
       await FeathersIO.service('users').create(credential)
+      console.log('User created')
 
       // if successful log-in
-      await FeathersIO.authenticate(credential)
-      message = 'You\'re authenticated'
+      await FeathersIO.authenticate(Object.assign({ strategy: 'local' }, credential))
+      message = 'User authenticated'
+      authenticated = true
+      
+      console.log('Local strategy authenticated')
 
     } catch(err) {
-
+      
       // If we got an error
       message = err
+      authenticated = false
+
+      console.log('Signup failled: ', err.message)
+
     }
 
     return dispatch({
-      type: 'SINGUP',
-      message: message
+      type: 'SIGNUP',
+      message: message,
+      authenticated: authenticated
     })
   }
 
@@ -37,65 +47,85 @@ export const singup = credential => {
 /**
  * Log in either using the given email/password or the token from storage
  * @param {object?} credential
- * @returns {async dispatch}
+ * @returns {async dispatch} LOGIN
  */
 export const login = credential => {
 
-  let message, redirect
-
   return async dispatch => {
+
+    let message, authenticated
     if (!credential) {
       try {
 
         // Try to authenticate using the JWT from localStorage
         await FeathersIO.authenticate()
-        message = 'You\'re authenticated'
-        redirect = true
+        message = 'JWT authenticated'
+        authenticated = true
+        console.log('JWT authenticated')
 
       } catch(err) {
 
         // If we got an error
-        message = err.message
+        message = null
+        authenticated = false
+        console.log('JWT authentication failled: ', err.message)
+
       }
     } else {
       try {
 
         // If we get login information, add the strategy we want to use for login
         await FeathersIO.authenticate(Object.assign({ strategy: 'local' }, credential))
-        message = 'You\'are authenticated'
-        redirect = true
+        message = 'Local strategy authenticated'
+        authenticated = true
+        console.log('Local strategy authenticated')
 
       } catch(err) {
 
         // If we got an error
         message = err.message
+        authenticated = false
+        console.log('Local strategy authentication failled: ', err.message)
+
       }
     }
 
     return dispatch({
       type: 'LOGIN',
       message: message,
-      redirect: redirect
+      authenticated: authenticated
     })
   }
 
 }
 
+/**
+ * Log out
+ * @returns { dispatch } LOGOUT
+ */
 export const logout = () => {
-  return async dispatch => {
-    let message
 
+  return async dispatch => {
+    let message, authenticated
     try {
 
       await FeathersIO.logout()
-      message = 'You\'re sing out'
+      message = 'Signed out'
+      authenticated = false
+      console.log('Signed out')
 
     } catch(err) {
+
+      console.log('Logout failled: ', err.message)
       message = err.message
+      authenticated = true
     }
+
     return dispatch({
       type: 'LOGOUT',
-      message: message
+      message: message,
+      authenticated: authenticated
     })
   }
+
 }

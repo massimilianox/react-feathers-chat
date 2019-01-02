@@ -1,17 +1,24 @@
 const defaultState = {
   loading: false,
   message: null,
-  redirect: false,
+  authenticated: false
 }
 
 export default (state = defaultState, action = {}) => {
   switch (action.type) {
-    case 'SINGUP':
+    case 'SIGNUP':
     case 'LOGIN': {
       return {
         ...state,
         message: action.message,
-        redirect: action.redirect
+        authenticated: action.authenticated
+      }
+    }
+    case 'LOGOUT': {
+      return {
+        ...state,
+        message: action.message,
+        authenticated: action.authenticated
       }
     }
     default:

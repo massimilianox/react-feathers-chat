@@ -3,17 +3,10 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router'
 
 import LoginFormComponents from '../components/login-form.component'
-import { login, singup } from '../actions/login.actions'
+import { login, signup } from '../actions/login.actions'
 
 
 class LoginPage extends Component {
-
-  // constructor(props) {
-  //   super(props)
-  //   this.state = {
-  //     redirect: false
-  //   }
-  // }
 
   componentWillMount() {
     this.props.login()
@@ -36,25 +29,21 @@ class LoginPage extends Component {
     credential && this.props[ev.target.id](credential)
   }
 
-  // logout = ev => {
-  //   this.props.logout()
-  // }
-
   render() {
     return (
       <div>
-        {
-          this.props.redirect ?
-          <Redirect to='/chat' /> :
-          <LoginFormComponents
-            submit={ this.onSubmit } />
-        }
+
+        { this.props.authenticated && <Redirect to='/chat' /> }
+
+        <LoginFormComponents
+          submit={ this.onSubmit }
+          message={ this.props.message } />
+
       </div>
     );
   }
 }
 
-// export default LoginPage;
 /**
  * Map state to props and inject login's actions
  */
@@ -62,6 +51,6 @@ export default connect( state => {
   return {
     loading: state.login.loading,
     message: state.login.message,
-    redirect: state.login.redirect
+    authenticated: state.login.authenticated
   }
-}, { login, singup })(LoginPage)
+}, { login, signup })(LoginPage)

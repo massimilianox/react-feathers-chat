@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { Form, Grid, Button, Segment } from 'semantic-ui-react'
+import { Grid } from 'semantic-ui-react'
+import { Redirect } from 'react-router'
 
-import { getUsers, getMessages, postMessage } from '../actions/chat.actions'
-import { login, logout } from '../actions/login.actions'
+import { getUsers, getMessages, postMessage, newMessage, newUser } from '../actions/chat.actions'
+import { logout, login } from '../actions/login.actions'
+
+import FeathersIO from '../services/socketio.service'
 
 import ChatUserlistComponent from '../components/chat-userlist.component'
 import ChatMessagesComponent from '../components/chat-messages.component'
@@ -11,8 +14,20 @@ import ChatMessagesComponent from '../components/chat-messages.component'
 class ChatPage extends Component {
 
   componentWillMount() {
+
     this.props.getUsers()
     this.props.getMessages()
+
+    FeathersIO.service('messages').on('created', this.pushMessage)
+    FeathersIO.service('users').on('created', this.pushUser)
+  }
+
+  pushMessage = message => {
+    this.props.newMessage(message)
+  }
+  
+  pushUser = user => {
+    this.props.newUser(user)
   }
 
   getMessage() {
@@ -31,7 +46,8 @@ class ChatPage extends Component {
   render() {
     return (
       <div>
-        { console.log('render:', '\nusers: ', this.props.users, '\nmessages: ', this.props.messages) }
+       
+        { !this.props.authenticated && <Redirect to='/' /> }
 
         <Grid celled relaxed='very' stackable>
           <Grid.Row>
@@ -53,8 +69,6 @@ class ChatPage extends Component {
   }
 }
 
-// export default ChatPage;
-
 /**
  * Map state to props and inject actions
  */
@@ -63,6 +77,7 @@ export default connect( state => {
     loading: state.chat.loading,
     users: state.chat.users,
     messages: state.chat.messages,
-    error: state.chat.error
+    error: state.chat.error,
+    authenticated: state.login.authenticated
   }
-}, { getUsers, getMessages, postMessage, logout, login })(ChatPage)
+}, { getUsers, getMessages, postMessage, newMessage, newUser, logout, login })(ChatPage)

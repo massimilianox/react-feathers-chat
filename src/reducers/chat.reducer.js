@@ -10,7 +10,6 @@ export default (state = defaultState, action = {}) => {
     case 'POST_MESSAGE': {
       return {
         ...state,
-        // message: action.message
       }
     }
     case 'NEW_MESSAGE': {
