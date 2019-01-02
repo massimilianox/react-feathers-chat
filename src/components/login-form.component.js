@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Form, Grid, Button, Segment } from 'semantic-ui-react'
 
 function LoginFormComponent({ submit, message }) {
