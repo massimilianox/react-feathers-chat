@@ -23,7 +23,6 @@ function LoginFormComponent({ submit, message }) {
               </Button.Group>
             </div>
           </Form>
-
         </Grid.Column>
       </Grid>
     </Segment>

@@ -11,18 +11,17 @@ export const signup = credential => {
   return async dispatch => {
     
     let message, authenticated
-
     try {
 
       // create the user if it does not exist
       await FeathersIO.service('users').create(credential)
       console.log('User created')
 
-      // if successful log-in
+      // if successful add the strategy and log-in
       await FeathersIO.authenticate(Object.assign({ strategy: 'local' }, credential))
       message = 'User authenticated'
       authenticated = true
-      
+
       console.log('Local strategy authenticated')
 
     } catch(err) {
@@ -116,9 +115,9 @@ export const logout = () => {
 
     } catch(err) {
 
-      console.log('Logout failled: ', err.message)
       message = err.message
       authenticated = true
+      console.log('Logout failled: ', err.message)
     }
 
     return dispatch({
