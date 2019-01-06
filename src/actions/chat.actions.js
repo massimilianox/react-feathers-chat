@@ -40,7 +40,13 @@ export const getMessages = () => {
     let messages, error
     try {
 
-      messages = await FeathersIO.service('messages').find()
+      messages = await FeathersIO.service('messages').find({
+        query: {
+          $sort: { createdAt: -1 },
+          $limit: 5
+        }
+      })
+
       console.log('messages fetched')
 
     } catch(err) {
@@ -51,7 +57,7 @@ export const getMessages = () => {
 
     return dispatch({
       type: 'LOAD_MESSAGES',
-      messages: messages ? messages.data : [],
+      messages: messages ? messages.data.reverse() : [],
       error: error
     })
   }

@@ -14,12 +14,16 @@ import ChatMessagesComponent from '../components/chat-messages.component'
 class ChatPage extends Component {
 
   componentWillMount() {
-
     this.props.getUsers()
     this.props.getMessages()
 
     FeathersIO.service('messages').on('created', this.pushMessage)
     FeathersIO.service('users').on('created', this.pushUser)
+  }
+  
+  componentWillUnmount() {
+    FeathersIO.service('messages').removeListener('created', this.pushMessage)
+    FeathersIO.service('users').removeListener('created', this.pushUser)
   }
 
   pushMessage = message => {

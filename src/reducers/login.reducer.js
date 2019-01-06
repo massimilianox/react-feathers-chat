@@ -7,14 +7,8 @@ const defaultState = {
 export default (state = defaultState, action = {}) => {
   switch (action.type) {
     case 'SIGNUP':
+    case 'LOGOUT':
     case 'LOGIN': {
-      return {
-        ...state,
-        message: action.message,
-        authenticated: action.authenticated
-      }
-    }
-    case 'LOGOUT': {
       return {
         ...state,
         message: action.message,
