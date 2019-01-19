@@ -28,6 +28,7 @@ class ChatPage extends Component {
 
   pushMessage = message => {
     this.props.newMessage(message)
+
   }
   
   pushUser = user => {
